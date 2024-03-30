@@ -2,14 +2,19 @@ from openai import OpenAI
 
 client = OpenAI()
 
-audio_file = open("/Users/albertoruizcajiga/Documents/SIS final/openai/openai-api/audio_file.m4a", "rb")
-transcription = client.audio.transcriptions.create(
-  model="whisper-1", 
-  file=audio_file
-)
+def transcribe_english_to_english():
+    audio_file = open("audio_file.m4a", "rb")
+    transcription = client.audio.transcriptions.create(
+      model="whisper-1", 
+      file=audio_file
+    )
+    transcription = transcription.text
 
-#print(transcription.text)
-transcription = transcription.text
+    transcription_file = open('transcription.txt', 'w')
+    transcription_file.write(transcription)
+    transcription_file.close()
+
+    return transcription
 
 def abstract_summary_extraction(transcription):
     response = client.chat.completions.create(
@@ -26,7 +31,7 @@ def abstract_summary_extraction(transcription):
             }
         ]
     )
-    return completion.choices[0].message.content
+    #return completion.choices[0].message.content
 
 
 
@@ -36,4 +41,5 @@ def meeting_minutes(transcription):
         'abstract_summary': abstract_summary,
     }
 
-print(meeting_minutes(transcription))
+#print(meeting_minutes(transcription))
+transcribe_english_to_english()
